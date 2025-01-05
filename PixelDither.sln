@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelDither", "PixelDither\PixelDither.csproj", "{94BA7209-BA87-45AF-A0FE-C4DE3A821D7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelDitherConsole", "PixelDitherConsole\PixelDitherConsole.csproj", "{7B26F47A-3263-41BB-82AA-E4BEDD83015E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94BA7209-BA87-45AF-A0FE-C4DE3A821D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94BA7209-BA87-45AF-A0FE-C4DE3A821D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94BA7209-BA87-45AF-A0FE-C4DE3A821D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94BA7209-BA87-45AF-A0FE-C4DE3A821D7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B26F47A-3263-41BB-82AA-E4BEDD83015E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B26F47A-3263-41BB-82AA-E4BEDD83015E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B26F47A-3263-41BB-82AA-E4BEDD83015E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B26F47A-3263-41BB-82AA-E4BEDD83015E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8CAE759-7BD3-4814-952A-C4D8CED31E11}
+	EndGlobalSection
+EndGlobal
