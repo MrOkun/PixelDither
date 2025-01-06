@@ -16,35 +16,20 @@ namespace PixelDither.Core
             SKColor nearestColor = SKColor.Empty;
             double nearestColorDistance = double.MaxValue;
 
-            for (int i = 0; i < palette.Count; i++)
+            foreach (var color in palette)
             {
-                double distance = double.MaxValue;
-
-                switch (distanceMethod)
+                double distance = distanceMethod switch
                 {
-                    case DistanceMethod.Euclidean:
-                        distance = Math.Sqrt(Math.Pow(originalColor.Red - palette[i].Red, 2) +
-                                             Math.Pow(originalColor.Green - palette[i].Green, 2) +
-                                             Math.Pow(originalColor.Blue - palette[i].Blue, 2));
-                        break;
-                    case DistanceMethod.Manhattan:
-                        distance = Math.Abs(originalColor.Red - palette[i].Red)
-                                 + Math.Abs(originalColor.Green - palette[i].Green)
-                                 + Math.Abs(originalColor.Blue - palette[i].Blue);
-                        break;
-                    case DistanceMethod.DeltaRGB:
-                        var red = Math.Abs(originalColor.Red - palette[i].Red);
-                        var green = Math.Abs(originalColor.Green - palette[i].Green);
-                        var blue = Math.Abs(originalColor.Blue - palette[i].Blue);
-
-                        distance = Math.Max(red, Math.Max(green, blue));
-                        break;
-                }
+                    DistanceMethod.Euclidean => CalculateEuclideanDistance(originalColor, color),
+                    DistanceMethod.Manhattan => CalculateManhattanDistance(originalColor, color),
+                    DistanceMethod.DeltaRGB => CalculateDeltaRGBDistance(originalColor, color),
+                    _ => throw new ArgumentOutOfRangeException(nameof(distanceMethod), "Unsupported distance method")
+                };
 
                 if (distance < nearestColorDistance)
                 {
                     nearestColorDistance = distance;
-                    nearestColor = palette[i];
+                    nearestColor = color;
                 }
             }
 
@@ -53,11 +38,40 @@ namespace PixelDither.Core
 
         public SKColor FindClosestColor(SKColor originalColor, int factor)
         {
-            byte red = (byte)Math.Clamp(Math.Round((double)(originalColor.Red / factor), 0) * factor, 0, byte.MaxValue);
-            byte green = (byte)Math.Clamp(Math.Round((double)(originalColor.Green / factor), 0) * factor, 0, byte.MaxValue);
-            byte blue = (byte)Math.Clamp(Math.Round((double)(originalColor.Blue / factor), 0) * factor, 0, byte.MaxValue);
+            byte red = QuantizeChannel(originalColor.Red, factor);
+            byte green = QuantizeChannel(originalColor.Green, factor);
+            byte blue = QuantizeChannel(originalColor.Blue, factor);
 
             return new SKColor(red, green, blue);
+        }
+
+        public double CalculateEuclideanDistance(SKColor color1, SKColor color2)
+        {
+            return Math.Sqrt(
+                Math.Pow(color1.Red - color2.Red, 2) +
+                Math.Pow(color1.Green - color2.Green, 2) +
+                Math.Pow(color1.Blue - color2.Blue, 2));
+        }
+
+        public double CalculateManhattanDistance(SKColor color1, SKColor color2)
+        {
+            return Math.Abs(color1.Red - color2.Red) +
+                   Math.Abs(color1.Green - color2.Green) +
+                   Math.Abs(color1.Blue - color2.Blue);
+        }
+
+        public double CalculateDeltaRGBDistance(SKColor color1, SKColor color2)
+        {
+            return Math.Max(
+                Math.Abs(color1.Red - color2.Red),
+                Math.Max(
+                    Math.Abs(color1.Green - color2.Green),
+                    Math.Abs(color1.Blue - color2.Blue)));
+        }
+
+        public byte QuantizeChannel(byte channel, int factor)
+        {
+            return (byte)Math.Clamp(Math.Round(channel / (double)factor) * factor, 0, byte.MaxValue);
         }
     }
 }

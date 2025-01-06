@@ -4,23 +4,54 @@ namespace PixelDither.Core
 {
     public class PaletteCaster
     {
-        public SKBitmap Cast(List<SKColor> palette, SKBitmap bitmap, DistanceMethod distanceMethod)
+        public SKBitmap Cast(string filePath, List<SKColor> palette, DistanceMethod distanceMethod)
+        {
+            var bitmap = SKBitmap.Decode(filePath);
+            return Cast(bitmap, palette, distanceMethod);
+        }
+
+        public SKBitmap Cast(SKBitmap bitmap, List<SKColor> palette, DistanceMethod distanceMethod)
         {
             ClosestColorFinder closestColorFinder = new ClosestColorFinder();
 
-            for (int i = 0; i < bitmap.Width; i++)
+            var info = bitmap.Info;
+            int width = info.Width;
+            int height = info.Height;
+            int bytesPerPixel = info.BytesPerPixel;
+            int rowBytes = info.RowBytes;
+
+            unsafe
             {
-                for (int j = 0; j < bitmap.Height; j++)
+                IntPtr pixelsPtr = bitmap.GetPixels();
+                Span<byte> pixels = new Span<byte>(pixelsPtr.ToPointer(), height * rowBytes);
+
+                for (int y = 0; y < height; y++)
                 {
-                    var pixel = bitmap.GetPixel(i, j);
+                    int rowStart = y * rowBytes;
 
-                    var closestColor = closestColorFinder.FindClosestColor(pixel, palette, distanceMethod);
+                    for (int x = 0; x < width; x++)
+                    {
+                        int pixelIndex = rowStart + x * bytesPerPixel;
 
-                    bitmap.SetPixel(i, j, closestColor);
+                        byte blue = pixels[pixelIndex];
+                        byte green = pixels[pixelIndex + 1];
+                        byte red = pixels[pixelIndex + 2];
+                        byte alpha = pixels[pixelIndex + 3];
+
+                        SKColor color = new SKColor(red, green, blue, alpha);
+
+                        SKColor closestColor = closestColorFinder.FindClosestColor(color, palette, distanceMethod);
+
+                        pixels[pixelIndex] = closestColor.Blue;
+                        pixels[pixelIndex + 1] = closestColor.Green;
+                        pixels[pixelIndex + 2] = closestColor.Red;
+                        pixels[pixelIndex + 3] = closestColor.Alpha;
+                    }
                 }
-            }
+            } 
 
             return bitmap;
         }
+
     }
 }

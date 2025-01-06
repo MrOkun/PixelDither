@@ -2,13 +2,13 @@
 
 namespace PixelDither.DitheringAlgorithm
 {
-    public abstract class Dithering
+    public abstract class RenderBase
     {
         public virtual string FilePath { get; set; }
-        public virtual SKBitmap Bitmap { get; set; }
         public virtual string NewFilePath { get; set; }
+        public virtual SKBitmap Bitmap { get; set; }
 
-        public virtual void Dither() { }
+        public virtual void Render() { }
         public void Save()
         {
             var encoded = Bitmap.Encode(SKEncodedImageFormat.Png, 8);
